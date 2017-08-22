@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<!-- namespace:Mapper映射 -->  
+<!-- 这个文件感觉就像StudentMapper接口的实现一样，只是从java文件变成了xml文件  
+充当了Dao类的功能  
+ -->  
+<mapper namespace="com.ninegame.hot.dao.UpdateApplyMapper">
+	<insert id="addOrUpdate" parameterType="UpdateApply">
+		insert into hot_update_apply (submit_user_name, project_id, audit_state, update_state, submit_time,
+			remark, cur_ver,dest_ver,client_charger,server_charger,wc_charger,test_charger,ui_charger,master_charger, hope_date)
+			values (#{submitUser.userName},#{project.id},0, 0, STR_TO_DATE(#{submitTime}, '%Y-%m-%d %H:%i:%s'), #{remark},
+			#{curVer},#{destVer},#{clientCharger},#{serverCharger},#{wcCharger},#{testCharger},#{uiCharger},#{masterCharger},STR_TO_DATE(#{hopeDate}, '%Y-%m-%d')
+			)
+	</insert>
+	
+	<update id="auditApply" parameterType="UpdateApply">
+		update hot_update_apply set audit_user_name=#{auditUser.userName}, audit_time=STR_TO_DATE(#{auditTime}, '%Y-%m-%d %H:%i:%s'),
+			audit_reason=#{auditReason}, audit_state=#{auditState}
+		where id=#{id}
+	</update>
+	
+	<update id="doUpdateApply" parameterType="UpdateApply">
+		update hot_update_apply set update_time=STR_TO_DATE(#{updateTime}, '%Y-%m-%d %H:%i:%s'),
+			update_state=#{updateState}, update_state=1
+		where id=#{id}
+	</update>
+	
+	<select id="getStateApply" parameterType="int" resultType="UpdateApply">
+		select audit_state auditState,update_state updateState
+		 from hot_update_apply where id=#{param1}
+	</select>
+	
+	<resultMap type="UpdateApply" id="applyMap">
+	    <id property="id" column="id"/>  
+	    <result property="auditState" column="audit_state"/>
+	    <result property="updateState" column="update_state"/>
+	    <result property="updateTime" column="update_time"/>
+	    <result property="auditTime" column="audit_time"/>
+	    <result property="submitTime" column="submit_time"/>
+	    <result property="remark" column="remark"/>
+	    <result property="auditReason" column="audit_reason"/>
+	    <result property="curVer" column="cur_ver"/>
+	    <result property="destVer" column="dest_ver"/>
+	    <result property="clientCharger" column="client_charger"/>
+	    <result property="serverCharger" column="server_charger"/>
+	    <result property="wcCharger" column="wc_charger"/>
+	    <result property="testCharger" column="test_charger"/>
+	    <result property="uiCharger" column="ui_charger"/>
+	    <result property="masterCharger" column="master_charger"/>
+	    <result property="hopeDate" column="hope_date"/>
+	    <association property="submitUser" column="submit_user_name" select="com.ninegame.hot.dao.UserAccountMapper.getUserByUserName"></association>
+	    <association property="project" column="project_id" select="com.ninegame.hot.dao.ProjectMapper.getProject"></association>
+	    <association property="auditUser" column="audit_user_name" select="com.ninegame.hot.dao.UserAccountMapper.getUserByUserName"></association>
+	</resultMap>
+	<select id="query" parameterType="map" resultMap="applyMap">
+		select id, submit_user_name , project_id, audit_user_name, audit_state,update_state,
+			IF(update_time is null, "", DATE_FORMAT(update_time, '%Y-%m-%d %H:%i:%s')) update_time,
+			IF(submit_time is null, "", DATE_FORMAT(submit_time, '%Y-%m-%d %H:%i:%s')) submit_time,
+			IF(audit_time is null, "", DATE_FORMAT(audit_time, '%Y-%m-%d %H:%i:%s')) audit_time,
+			remark,audit_reason
+		 from hot_update_apply where 1=1
+	</select>
+	
+    <!--查询分页用的总数-->
+    <select id="queryPageRecordSize" resultType="int" parameterType="map">
+		select count(1)
+		 from hot_update_apply a
+		 	left join user_account u1 on a.submit_user_name=u1.user_name
+		 	left join user_account u2 on a.audit_user_name=u2.user_name
+		 	 where 1=1
+		 <if test="submitTrueName != null">
+		 	and u1.name like concat('%',#{submitTrueName},'%')
+		 </if>
+		 <if test="auditTrueName != null">
+		 	and u2.name like concat('%',#{auditTrueName},'%')
+		 </if>
+		 <if test="auditState != null">
+		 	and a.audit_state=#{auditState}
+		 </if>
+		 <if test="updateState != null">
+		 	and a.update_state=#{updateState}
+		 </if>
+		 <if test="proId != null">
+		 	and a.project_id=#{proId}
+		 </if>
+		 <if test="curVer != null">
+		 	and a.cur_ver=#{curVer}
+		 </if>
+		 <if test="destVer != null">
+		 	and a.dest_ver=#{destVer}
+		 </if>
+		 <if test="clientCharger != null">
+		 	and a.client_charger like concat('%',#{clientCharger},'%')
+		 </if>
+		 <if test="serverCharger != null">
+		 	and a.server_charger like concat('%',#{serverCharger},'%')
+		 </if>
+		 <if test="wcCharger != null">
+		 	and a.wc_charger like concat('%',#{wcCharger},'%')
+		 </if>
+		 <if test="testCharger != null">
+		 	and a.test_charger like concat('%',#{testCharger},'%')
+		 </if>
+		 <if test="uiCharger != null">
+		 	and a.ui_charger like concat('%',#{uiCharger},'%')
+		 </if>
+		 <if test="masterCharger != null">
+		 	and a.master_charger like concat('%',#{masterCharger},'%')
+		 </if>
+		 <if test="fromHopeDate != null">
+		 	and a.hope_date &gt;=#{fromHopeDate}
+		 </if>
+		 <if test="toHopeDate != null">
+		 	and a.hope_date &lt;=#{toHopeDate}
+		 </if>
+    </select>
+	
+    <!--查询分页数据-->
+    <select id="queryPageRecords" resultMap="applyMap" parameterType="map">
+		select a.id, a.submit_user_name , a.project_id, a.audit_user_name, a.audit_state,a.update_state,
+			IF(a.update_time is null, "", DATE_FORMAT(a.update_time, '%Y-%m-%d %H:%i:%s')) update_time,
+			IF(a.submit_time is null, "", DATE_FORMAT(a.submit_time, '%Y-%m-%d %H:%i:%s')) submit_time,
+			IF(a.audit_time is null, "", DATE_FORMAT(a.audit_time, '%Y-%m-%d %H:%i:%s')) audit_time,
+			a.remark,a.audit_reason,cur_ver,dest_ver,client_charger,server_charger,wc_charger,test_charger,ui_charger,master_charger,
+			DATE_FORMAT(a.hope_date, '%Y-%m-%d') hope_date
+		 from hot_update_apply a
+		 	left join user_account u1 on a.submit_user_name=u1.user_name
+		 	left join user_account u2 on a.audit_user_name=u2.user_name
+		 	 where 1=1
+		 <if test="submitTrueName != null">
+		 	and u1.name like concat('%',#{submitTrueName},'%')
+		 </if>
+		 <if test="auditTrueName != null">
+		 	and u2.name like concat('%',#{auditTrueName},'%')
+		 </if>
+		 <if test="auditState != null">
+		 	and a.audit_state=#{auditState}
+		 </if>
+		 <if test="updateState != null">
+		 	and a.update_state=#{updateState}
+		 </if>
+		 <if test="proId != null">
+		 	and a.project_id=#{proId}
+		 </if>
+		 <if test="curVer != null">
+		 	and a.cur_ver=#{curVer}
+		 </if>
+		 <if test="destVer != null">
+		 	and a.dest_ver=#{destVer}
+		 </if>
+		 <if test="clientCharger != null">
+		 	and a.client_charger like concat('%',#{clientCharger},'%')
+		 </if>
+		 <if test="serverCharger != null">
+		 	and a.server_charger like concat('%',#{serverCharger},'%')
+		 </if>
+		 <if test="wcCharger != null">
+		 	and a.wc_charger like concat('%',#{wcCharger},'%')
+		 </if>
+		 <if test="testCharger != null">
+		 	and a.test_charger like concat('%',#{testCharger},'%')
+		 </if>
+		 <if test="uiCharger != null">
+		 	and a.ui_charger like concat('%',#{uiCharger},'%')
+		 </if>
+		 <if test="masterCharger != null">
+		 	and a.master_charger like concat('%',#{masterCharger},'%')
+		 </if>
+		 <if test="fromHopeDate != null">
+		 	and a.hope_date &gt;=#{fromHopeDate}
+		 </if>
+		 <if test="toHopeDate != null">
+		 	and a.hope_date &lt;=#{toHopeDate}
+		 </if>
+		 order by a.id desc
+    	limit #{pageFrom}, #{pagePerSize}
+    </select>
+	<delete id="delete"></delete>
+</mapper>  

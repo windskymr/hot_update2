@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">  
+<configuration>  
+    <!-- 引入jdbc配置信息 
+    <properties resource="jdbc.properties"></properties> 
+    -->   
+    <typeAliases>  
+        <typeAlias alias="Project" type="com.ninegame.hot.model.Project"/>
+        <typeAlias alias="UpdateApply" type="com.ninegame.hot.model.UpdateApply"/>
+        <typeAlias alias="UserAccount" type="com.ninegame.hot.model.UserAccount"/>
+    </typeAliases>  
+    <!-- 环境配置 -->  
+    <environments default="development">  
+        <!-- 开发环境，企业里面可能有多个环境 -->  
+        <environment id="development">  
+            <transactionManager type="JDBC" />  
+            <!-- 配置数据库连接信息 -->  
+             <dataSource type="POOLED">  
+                 <property name="driver" value="com.mysql.jdbc.Driver" />  
+                 <property name="url" value="jdbc:mysql://127.0.0.1:3306/hot_update?useUnicode=true&amp;characterEncoding=utf8" />  
+                 <property name="username" value="root" />  
+                 <property name="password" value="root" />  
+             </dataSource>  
+         </environment>  
+     </environments>  
+       
+     <mappers>  
+         <!-- 注册StudentMapper.xml文件， -->  
+         <mapper resource="com/ninegame/hot/mapper/ProjectMapper.xml"/>
+         <mapper resource="com/ninegame/hot/mapper/UpdateApplyMapper.xml"/>
+         <mapper resource="com/ninegame/hot/mapper/UserAccountMapper.xml"/>
+     </mappers>  
+
+</configuration>  

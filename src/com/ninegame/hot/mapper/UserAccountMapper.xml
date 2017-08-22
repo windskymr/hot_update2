@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<!-- namespace:Mapper映射 -->  
+<!-- 这个文件感觉就像StudentMapper接口的实现一样，只是从java文件变成了xml文件  
+充当了Dao类的功能  
+ -->  
+<mapper namespace="com.ninegame.hot.dao.UserAccountMapper">
+	<insert id="addOrUpdate" parameterType="UserAccount">
+		insert into user_account (user_name, name, reg_time, password, identify_level)
+			values (#{userName},#{name},STR_TO_DATE(#{regTime}, '%Y-%m-%d %H:%i:%s'),#{password},#{identifyLevel})
+	</insert>
+	
+	<select id="existUserName" parameterType="string" resultType="int">
+		select count(1) from user_account where user_name=#{param1}
+	</select>
+	<select id="existName" parameterType="string" resultType="int">
+		select count(1) from user_account where name=#{param1}
+	</select>
+	
+	<select id="getUser" parameterType="string" resultType="UserAccount">
+		select id, user_name userName, name, identify_level identifyLevel
+		 from user_account where user_name=#{0} and password=#{1}
+	</select>
+	
+	<select id="getUserByUserName" parameterType="string" resultType="UserAccount">
+		select id, user_name userName, name, identify_level identifyLevel
+		 from user_account where user_name=#{param1}
+	</select>
+	
+	<delete id="delete"></delete>
+</mapper>  

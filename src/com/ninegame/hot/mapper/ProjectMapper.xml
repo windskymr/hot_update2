@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<!-- namespace:Mapper映射 -->  
+<!-- 这个文件感觉就像StudentMapper接口的实现一样，只是从java文件变成了xml文件  
+充当了Dao类的功能  
+ -->  
+<mapper namespace="com.ninegame.hot.dao.ProjectMapper">
+	<insert id="addOrUpdate" parameterType="Project">
+		insert into project (name, `describe`, creator_user, create_time)
+			values (#{name},#{describe}, #{creatorUser.userName},STR_TO_DATE(#{createTime}, '%Y-%m-%d %H:%i:%s'))
+	</insert>
+	
+	<select id="query" parameterType="map" resultType="Project">
+		select name, id, `describe`, DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') createTime from project
+	</select>
+	
+	<select id="getProject" parameterType="int" resultType="Project">
+		select name, id, `describe`, DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') createTime from project
+			where id=#{param1}
+	</select>
+	
+	<delete id="delete"></delete>
+	
+	<select id="existProject" parameterType="string" resultType="int">
+		select count(1) from project where name=#{param1}
+	</select>
+</mapper>  
