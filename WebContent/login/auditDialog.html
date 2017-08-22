@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>申请热更新</title>
+<link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div>
+		<form action="" onsubmit="return postAuditFunc(this);">
+			<table border="0" class="table table-condensed">
+				<tr><td><span class="form-control">申请人:</span></td><td width="50px"></td><td>
+					<span id="applyId" class="form-control" style="text-align:right"></span></td></tr>
+				<tr><td><span class="form-control">项目:</span></td><td></td><td>
+					<span id="proName" class="form-control" style="text-align:right"></span></td></tr>
+				<tr><td><span class="form-control">审核选项:</span></td><td></td>
+					<td><select class="form-control" style="text-align:right" onchange="changeSelect(this, 'auditState')">
+						<option value="1" >通过</option>
+						<option value="2" >不通过</option>
+					</select><input type="hidden" name="auditState" id="auditState"/></td></tr>
+				<tr><td><span class="form-control">审核理由:</span></td><td></td>
+				<td><textarea class="form-control" name="reason"></textarea></td></tr>
+				<tr><td></td><td></td><td><input type="submit" value="提交" class="btn btn-success"
+					style="float:right; margin-right:50px;"/></td>
+			</table>
+		</form>
+	</div>
+</body>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#applyId").html(window.parent.g_apply.submitName);
+	$("#proName").html(window.parent.g_apply.proName);
+	changeSelect($("form select")[0],"auditState");
+});
+function postAuditFunc(form){
+	window.parent.postAudit($(form).find("#auditState").val(), $(form).find("textarea").val())
+	return false;
+}
+function changeSelect(selectObj, deskInputId){
+	if(selectObj.options && selectObj.options.length > 0){
+		$("#" + deskInputId).val(selectObj.options[selectObj.selectedIndex].value);
+	}
+}
+</script>
+</html>
